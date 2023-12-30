@@ -8,10 +8,14 @@ import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakSessionFactory;
 import org.keycloak.provider.ProviderConfigProperty;
 import org.keycloak.provider.ProviderConfigurationBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class CustomAuthenticatorFactory implements AuthenticatorFactory {
+
+    private static final Logger logger = LoggerFactory.getLogger(CustomAuthenticatorProvider.class);
 
     public static final String PROVIDER_ID = "custom-authentication-provider";
     private static final CustomAuthenticatorProvider SINGLETON = new CustomAuthenticatorProvider();
@@ -60,25 +64,20 @@ public class CustomAuthenticatorFactory implements AuthenticatorFactory {
     public List<ProviderConfigProperty> getConfigProperties() {
         return ProviderConfigurationBuilder.create()
                 .property()
-                .name("name")
-                .label("Boolean Type")
-                .helpText("This is a boolean type")
-                .type(ProviderConfigProperty.BOOLEAN_TYPE)
-                .add()
-                .property()
-                .label("String function")
-                .helpText("This is a string function")
+                .name("timer")
+                .label("Authentication Time (seconds)")
+                .helpText("This field is to stop the authentication time for some times")
                 .type(ProviderConfigProperty.STRING_TYPE)
+                .defaultValue(10)
                 .add()
-                .property()
-                .label("List")
-                .type(ProviderConfigProperty.LIST_TYPE)
-                .options(LIST_DATA)
-                .add().build();
+                .build();
     }
+
+
 
     @Override
     public Authenticator create(KeycloakSession keycloakSession) {
+        logger.info("Creating instance of CustomAuthenticatorProvider");
         return SINGLETON;
     }
 
@@ -94,7 +93,7 @@ public class CustomAuthenticatorFactory implements AuthenticatorFactory {
 
     @Override
     public void close() {
-
+        logger.info("Closing CustomAuthenticatorProvider");
     }
 
 
